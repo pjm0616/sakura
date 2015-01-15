@@ -752,6 +752,7 @@ sakura_eof (GtkWidget *widget, void *data)
 }
 
 /* This handler is called when window title changes, and is used to change window and notebook pages titles */
+// FIXME: This is not called if you switch tab by clicking a tab with mouse.
 static void
 sakura_title_changed (GtkWidget *widget, void *data)
 {
@@ -772,11 +773,8 @@ sakura_title_changed (GtkWidget *widget, void *data)
 		sakura_set_tab_label_text(title, modified_page);
 
 	/* FIXME: Check if title has been set by the user */
-	if (n_pages==1) {
-		/* Beware: It doesn't work in Unity because there is a Compiz bug: #257391 */
-		gtk_window_set_title(GTK_WINDOW(sakura.main_window), title);
-	} else 
-		gtk_window_set_title(GTK_WINDOW(sakura.main_window), "sakura");
+	/* Beware: It doesn't work in Unity because there is a Compiz bug: #257391 */
+	gtk_window_set_title(GTK_WINDOW(sakura.main_window), title);
 
 }
 
