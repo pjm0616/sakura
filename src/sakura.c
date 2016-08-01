@@ -316,7 +316,7 @@ struct terminal {
 #define ICON_FILE "terminal-tango.svg"
 #define SCROLL_LINES 4096
 #define DEFAULT_SCROLL_LINES 4096
-#define HTTP_REGEXP "(ftp|http)s?://[-a-zA-Z0-9.?$%&/=_~#.,:;+]*[-a-zA-Z0-9.?$%&/=_~#+]"
+#define HTTP_REGEXP "(ftp|http)s?://[-a-zA-Z0-9.?$%&/=_~#.,:;+가-힣]*[-a-zA-Z0-9.?$%&/=_~#+가-힣]"
 #define DEFAULT_CONFIGFILE "sakura.conf"
 #define DEFAULT_COLUMNS 80
 #define DEFAULT_ROWS 24
