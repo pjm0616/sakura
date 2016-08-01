@@ -432,6 +432,7 @@ static void     sakura_destroy();
 static void     sakura_add_tab();
 static void     sakura_del_tab();
 static void     sakura_move_tab(gint);
+static void     sakura_switch_tab(gint);
 static gint     sakura_find_tab(VteTerminal *);
 static void     sakura_set_font();
 static void     sakura_set_tab_label_text(const gchar *, gint page);
@@ -517,6 +518,7 @@ sakura_key_press (GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 	   move never works, because switch will be processed first, so it needs to be fixed with the following condition */
 	if ( (event->state & sakura.switch_tab_accelerator) == sakura.switch_tab_accelerator && 
 	     (sakura.switch_tab_accelerator > sakura.move_tab_accelerator || (event->state & sakura.move_tab_accelerator) != sakura.move_tab_accelerator)) {
+		gint page = gtk_notebook_get_current_page(GTK_NOTEBOOK(sakura.notebook));
 		if ((keyval>=GDK_KEY_1) && (keyval<=GDK_KEY_9) && (keyval<=GDK_KEY_1-1+npages)
 				&& (keyval!=GDK_KEY_1+gtk_notebook_get_current_page(GTK_NOTEBOOK(sakura.notebook)))) {
 
@@ -535,21 +537,13 @@ sakura_key_press (GtkWidget *widget, GdkEventKey *event, gpointer user_data)
 				case GDK_KEY_9: topage=8; break;
 			}
 			if (topage <= npages)
-				gtk_notebook_set_current_page(GTK_NOTEBOOK(sakura.notebook), topage);
+				sakura_switch_tab(topage);
 			return TRUE;
 		} else if (keyval==sakura.prev_tab_key) {
-			if (gtk_notebook_get_current_page(GTK_NOTEBOOK(sakura.notebook))==0) {
-				gtk_notebook_set_current_page(GTK_NOTEBOOK(sakura.notebook), npages-1);
-			} else {
-				gtk_notebook_prev_page(GTK_NOTEBOOK(sakura.notebook));
-			}
+			sakura_switch_tab((page - 1) % npages);
 			return TRUE;
 		} else if (keyval==sakura.next_tab_key) {
-			if (gtk_notebook_get_current_page(GTK_NOTEBOOK(sakura.notebook))==(npages-1)) {
-				gtk_notebook_set_current_page(GTK_NOTEBOOK(sakura.notebook), 0);
-			} else {
-				gtk_notebook_next_page(GTK_NOTEBOOK(sakura.notebook));
-			}
+			sakura_switch_tab((page + 1) % npages);
 			return TRUE;
 		}
 	}
@@ -2706,6 +2700,16 @@ sakura_move_tab(gint direction)
 	}
 }
 
+/* Switches the current tab to `page'. */
+static void
+sakura_switch_tab(int page)
+{
+	struct terminal *term;
+
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(sakura.notebook), page);
+	term = sakura_get_page_term(sakura, page);
+	sakura_title_changed(term->vte, NULL);
+}
 
 /* Find the notebook page for the vte terminal passed as a parameter */
 static gint sakura_find_tab(VteTerminal *vte_term)
