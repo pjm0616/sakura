@@ -3099,7 +3099,7 @@ sakura_add_tab()
 								exit(1);
 						}
 					}
-					g_error_free(gerror);
+					if (gerror!=NULL) g_error_free(gerror);
 					g_free(command_joined);
 				}
 			}
